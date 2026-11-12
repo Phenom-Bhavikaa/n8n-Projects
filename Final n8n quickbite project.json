@@ -1,0 +1,2495 @@
+{
+  "name": "Final n8n quickbite project",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -480,
+        48
+      ],
+      "id": "90f5199b-41b0-44f2-8fa0-ba93f61fcf48",
+      "name": "Telegram Trigger",
+      "webhookId": "fc19f310-4fb4-49af-9eac-1d872ca06fc3",
+      "credentials": {
+        "telegramApi": {
+          "id": "XFGsqJB7807Mp5G7",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o",
+          "mode": "list",
+          "cachedResultName": "Customer details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 584936010,
+          "mode": "list",
+          "cachedResultName": "Form responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o/edit#gid=584936010"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Telegram ID",
+              "lookupValue": "={{ $json.message.from.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -304,
+        48
+      ],
+      "id": "56134b4e-b842-4d31-ac17-7be23d0d59a0",
+      "name": "See if customer already exists",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "K5rPgSLfIQJvZw8c",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "message": "Hello, please login here✨",
+        "responseType": "customForm",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "What is your name?",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Your Phone number?",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Enter your full address",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "City name"
+            },
+            {
+              "fieldLabel": "Email address"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        32,
+        224
+      ],
+      "id": "2459bfe3-a96b-40f9-a3e1-d3a0674a1689",
+      "name": "Customer login",
+      "webhookId": "2869f5da-bcf4-40f0-a88f-4024eb211343",
+      "credentials": {
+        "telegramApi": {
+          "id": "XFGsqJB7807Mp5G7",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7df1fee4-e8ed-42ac-a16e-dbbe0206b1ba",
+              "leftValue": "={{ $json['Telegram ID'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -128,
+        48
+      ],
+      "id": "462f2494-96e6-46f0-8920-8533095fe8b6",
+      "name": "ChatID linked or not already"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o",
+          "mode": "list",
+          "cachedResultName": "Customer details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 584936010,
+          "mode": "list",
+          "cachedResultName": "Form responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o/edit#gid=584936010"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Phone number",
+              "lookupValue": "={{ $json.data['Your Phone number?'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        176,
+        224
+      ],
+      "id": "6e0fdd30-d61a-419f-8cec-bda7dca15661",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "K5rPgSLfIQJvZw8c",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8a5fb2b6-eb63-4722-88f7-cd9e69236822",
+              "leftValue": "={{ $('See if customer already exists').item.json.Name }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        320,
+        224
+      ],
+      "id": "c6dfdd7a-861e-4217-87f3-2c00d4a62b30",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o",
+          "mode": "list",
+          "cachedResultName": "Customer details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 584936010,
+          "mode": "list",
+          "cachedResultName": "Form responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o/edit#gid=584936010"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Phone number": "={{ $('Customer login').item.json.data['Your Phone number?'] }}",
+            "Telegram ID": "={{ $('Telegram Trigger').item.json.message.from.id }}"
+          },
+          "matchingColumns": [
+            "Phone number"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email address",
+              "displayName": "Email address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full address",
+              "displayName": "Full address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone number",
+              "displayName": "Phone number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Restaurat ",
+              "displayName": "Restaurat ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Order",
+              "displayName": "Order",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telegram ID",
+              "displayName": "Telegram ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        496,
+        128
+      ],
+      "id": "9ede8802-9561-45a1-8a7a-03c7ee4bc11f",
+      "name": "Update row in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "K5rPgSLfIQJvZw8c",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o",
+          "mode": "list",
+          "cachedResultName": "Customer details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 584936010,
+          "mode": "list",
+          "cachedResultName": "Form responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o/edit#gid=584936010"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Telegram ID": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+            "Name": "={{ $('Customer login').item.json.data['What is your name?'] }}",
+            "Phone number": "={{ $('Customer login').item.json.data['Your Phone number?'] }}",
+            "City": "={{ $('Customer login').item.json.data['City name'] }}",
+            "Full address": "={{ $('Customer login').item.json.data['Enter your full address'] }}",
+            "Email address": "={{ $('Customer login').item.json.data['Email address'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email address",
+              "displayName": "Email address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full address",
+              "displayName": "Full address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone number",
+              "displayName": "Phone number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telegram ID",
+              "displayName": "Telegram ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Restaurant",
+              "displayName": "Restaurant",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Full order",
+              "displayName": "Full order",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        496,
+        304
+      ],
+      "id": "f01fb54b-7f74-424e-8e72-45c5119217ad",
+      "name": "Append row in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "K5rPgSLfIQJvZw8c",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "message": "Welcome✨\nPlease fill out the form below for the next actions📜\n",
+        "responseType": "customForm",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "What would you like to do",
+              "fieldType": "checkbox",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "I have a query/want restaurant info🤔"
+                  },
+                  {
+                    "option": "I want to cancel a order/want a refund😬"
+                  },
+                  {
+                    "option": "File a complaint🔪"
+                  },
+                  {
+                    "option": "I want to place an order📊"
+                  }
+                ]
+              },
+              "limitSelection": "exact",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        -240
+      ],
+      "id": "d7e30dbb-4286-41de-8b91-4c37d9221bfe",
+      "name": "What you wanna do",
+      "webhookId": "790cbd67-2ec0-4d04-91b9-e2ba1b040ff6",
+      "credentials": {
+        "telegramApi": {
+          "id": "XFGsqJB7807Mp5G7",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        1440,
+        416
+      ],
+      "id": "7b7ce144-ddf6-4af5-bc61-4a0c95f86c21",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Look up food items, prices and other info. Do not generate a whole big body of text when asked for a menu, just the food tems and prices. ",
+        "documentId": {
+          "__rl": true,
+          "value": "1KzMYQ5yYpvH7O7e4yHpaoj0TVeKBsxBUsIw-jxYuGvQ",
+          "mode": "list",
+          "cachedResultName": "QuickBite Master MenuFinal",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KzMYQ5yYpvH7O7e4yHpaoj0TVeKBsxBUsIw-jxYuGvQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1916134633,
+          "mode": "list",
+          "cachedResultName": "QuickBite Master Menu V2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KzMYQ5yYpvH7O7e4yHpaoj0TVeKBsxBUsIw-jxYuGvQ/edit#gid=1916134633"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1504,
+        0
+      ],
+      "id": "d791313a-f73d-43c8-b2fa-aea606d6b5b3",
+      "name": "Menu sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "K5rPgSLfIQJvZw8c",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o",
+          "mode": "list",
+          "cachedResultName": "Customer details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 584936010,
+          "mode": "list",
+          "cachedResultName": "Form responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o/edit#gid=584936010"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Ordering",
+            "Phone number": "=",
+            "Telegram ID": "={{ $('Telegram Trigger').item.json.message.from.id }}"
+          },
+          "matchingColumns": [
+            "Telegram ID"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email address",
+              "displayName": "Email address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full address",
+              "displayName": "Full address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone number",
+              "displayName": "Phone number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telegram ID",
+              "displayName": "Telegram ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Restaurant",
+              "displayName": "Restaurant",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full order",
+              "displayName": "Full order",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1056,
+        32
+      ],
+      "id": "03d8c1d7-8dc9-4ae1-b23e-cbfde110e048",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "K5rPgSLfIQJvZw8c",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Please message this account for your request: \n\"https://t.me/Bhavikaa_z\" \n\nWe apologize for the inconvenience ⏱️",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1696,
+        -256
+      ],
+      "id": "ab0d257a-69ce-43a4-8157-d625b548c272",
+      "name": "Send a text message1",
+      "webhookId": "15c0df3d-e9b8-4012-b3c9-b7efcf6d25a0",
+      "credentials": {
+        "telegramApi": {
+          "id": "XFGsqJB7807Mp5G7",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "If you have any complaints, please fill out this form- 📜\n<a href=\"https://docs.google.com/forms/d/e/1FAIpQLSezIzW3gZQPjWc5oiVsPG7w9_iNvvVQCuEyePkDMFRWgP84pw/viewform?usp=publish-editor\">Click here to file a complaint</a>",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1488,
+        -224
+      ],
+      "id": "03b6dc8b-3b88-4861-9354-57c9af885cdc",
+      "name": "Send a text message",
+      "webhookId": "71e5e84c-5514-4505-86b5-06fda3631e64",
+      "credentials": {
+        "telegramApi": {
+          "id": "XFGsqJB7807Mp5G7",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1904,
+        -752
+      ],
+      "id": "78138897-a8da-41d6-ab7f-c098523bbbc1",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "Iab9YJrVRHk3Ywha",
+          "name": "Groq account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        2000,
+        -688
+      ],
+      "id": "9bf86eb9-05a7-47fa-b6fd-29ef8218bbf8",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Send message and wait for response').item.json.data.text }}",
+        "options": {
+          "systemMessage": "# Role\nYou are QuickBite's friendly customer support assistant on Telegram.\n\n# Data Sources\nYou have two tools:\n1. Menu Sheet Tool — for food items, prices, and categories.\n2. Restaurant FAQ Sheet Tool — for general info like hours, location, delivery, policies.\n\nPick whichever tool fits the question. If you're not sure, just try the one that seems closest — don't overthink it.\n\n# How to Answer\n- Search using simple keywords from the question (e.g. if they ask \"do you have pizza?\", search \"pizza\").\n- If you get a result back, even a partial match, use it to answer naturally.\n- Only respond with the single word \"false\" no punctuation, no emojis, no other text, if you've genuinely checked and there's nothing even close to relevant in either sheet. Don't give up on the first try — if the first search seems empty, try a shorter or simpler keyword once before saying false.\n\n# Style\n- Keep replies short, warm, and conversational — like texting a friend, use emojis.\n- Don't make up info that isn't in the sheets.\n- When the customer says they're done (e.g. \"that's all\", \"thanks, no more questions\"), send a short warm goodbye that includes the exact phrase \"Have a great day!\" — only use that phrase when actually wrapping up.\nThe customer can ask for menu recommendations so if they do ask suggest some food items and keep it short. ",
+          "maxIterations": 5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1904,
+        -528
+      ],
+      "id": "9ddc7c3c-7a8e-42ac-9bfe-dc9c883be360",
+      "name": "Query agent"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this ONLY for general restaurant questions like opening hours, location, delivery area, policies categories etc. ",
+        "documentId": {
+          "__rl": true,
+          "value": "1ezQ2XDN6FLmnqFsAbkr_OSOcNGCJhxIc_4npl-Z0Khs",
+          "mode": "list",
+          "cachedResultName": "QuickBite Restaurant Policies & FAQs Master",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ezQ2XDN6FLmnqFsAbkr_OSOcNGCJhxIc_4npl-Z0Khs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1229021341,
+          "mode": "list",
+          "cachedResultName": "QuickBite Restaurant Policies & FAQs Master",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ezQ2XDN6FLmnqFsAbkr_OSOcNGCJhxIc_4npl-Z0Khs/edit#gid=1229021341"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        2048,
+        -832
+      ],
+      "id": "bfbfe949-d520-49f2-8608-f293fa0024a4",
+      "name": "Restaurant queries",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "K5rPgSLfIQJvZw8c",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f50f4666-25f2-425d-b1a1-08a6a1e2423d",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "False",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "38ee262b-9c09-46b6-8039-ea30a500ec36",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "Have a great day!",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2256,
+        -528
+      ],
+      "id": "c0662b2d-5865-4d07-9c92-1b1f4a3ed518",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Please message this account for any more requests: \n\"https://t.me/Bhavikaa_z\" ",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2416,
+        -416
+      ],
+      "id": "3df958bd-2b9a-4a11-b529-eccf3a55f5c9",
+      "name": "Send a text message2",
+      "webhookId": "15c0df3d-e9b8-4012-b3c9-b7efcf6d25a0",
+      "credentials": {
+        "telegramApi": {
+          "id": "XFGsqJB7807Mp5G7",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1904,
+        160
+      ],
+      "id": "0687f78b-9c9f-4732-bc33-a0e3a4e9f3d9",
+      "name": "Send a text message3",
+      "webhookId": "c8b8eec7-2949-477b-a575-ea409191ec1f",
+      "credentials": {
+        "telegramApi": {
+          "id": "XFGsqJB7807Mp5G7",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "cc2013f2-5f41-4dc0-9efd-9cf372c81c0e",
+                    "leftValue": "={{ $('See if customer already exists').item.json.Status }}",
+                    "rightValue": "ordering",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "f7a2ae34-ce29-4522-a727-84c493925839",
+                    "leftValue": "={{ $('See if customer already exists').item.json.Status }}",
+                    "rightValue": "query ",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        16
+      ],
+      "id": "62006917-fa50-4618-9e56-de36fa024db7",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.data['What would you like to do'][0] }}",
+                    "rightValue": "I have a query/want restaurant info🤔",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "0149e9a6-de4c-405b-bbbf-566b8cfa4802"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Query"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "11824a3f-39ae-4432-ac95-7d90fac0b9b7",
+                    "leftValue": "={{ $json.data['What would you like to do'][0] }}",
+                    "rightValue": "I want to cancel a order/want a refund😬",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Cancel/refund"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2020c3df-6a6d-42d9-998d-c3256c7e18aa",
+                    "leftValue": "={{ $json.data['What would you like to do'][0] }}",
+                    "rightValue": "File a complaint🔪",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Complaint"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "82fe3bc4-02fb-4fc2-ac04-02393a1b0444",
+                    "leftValue": "={{ $json.data['What would you like to do'][0] }}",
+                    "rightValue": "I want to place an order📊",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Place an order"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        976,
+        -272
+      ],
+      "id": "239aaf2e-e1cd-4f65-921a-1fc5e9853e94",
+      "name": "Main switch"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o",
+          "mode": "list",
+          "cachedResultName": "Customer details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 584936010,
+          "mode": "list",
+          "cachedResultName": "Form responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o/edit#gid=584936010"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Phone number": "=",
+            "Status": "query",
+            "Telegram ID": "={{ $('Telegram Trigger').item.json.message.from.id }}"
+          },
+          "matchingColumns": [
+            "Telegram ID"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email address",
+              "displayName": "Email address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full address",
+              "displayName": "Full address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone number",
+              "displayName": "Phone number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telegram ID",
+              "displayName": "Telegram ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Restaurant",
+              "displayName": "Restaurant",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full order",
+              "displayName": "Full order",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1696,
+        -528
+      ],
+      "id": "789c191a-ed49-49da-8e2a-79f71f9f2099",
+      "name": "Update row in sheet2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "K5rPgSLfIQJvZw8c",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2480,
+        -608
+      ],
+      "id": "8198acc4-e151-44a3-83fe-f211d0925f14",
+      "name": "Send a text message4",
+      "webhookId": "b6efda67-a1cc-41ce-b58c-bc8bb1f1df74",
+      "credentials": {
+        "telegramApi": {
+          "id": "XFGsqJB7807Mp5G7",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o",
+          "mode": "list",
+          "cachedResultName": "Customer details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 584936010,
+          "mode": "list",
+          "cachedResultName": "Form responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o/edit#gid=584936010"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Phone number": "=",
+            "Status": "idle",
+            "Telegram ID": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+          },
+          "matchingColumns": [
+            "Telegram ID"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email address",
+              "displayName": "Email address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full address",
+              "displayName": "Full address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone number",
+              "displayName": "Phone number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telegram ID",
+              "displayName": "Telegram ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Restaurant",
+              "displayName": "Restaurant",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full order",
+              "displayName": "Full order",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2592,
+        -416
+      ],
+      "id": "06d678ca-7ec1-4c43-ba80-4e81b882772c",
+      "name": "Update row in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "K5rPgSLfIQJvZw8c",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Please message this account for your request: \n\"https://t.me/Bhavikaa_z\" \n\nWe apologize for the inconvenience ⏱️",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1872,
+        336
+      ],
+      "id": "e1c1de12-fa14-46a7-ac19-1255b790d0c7",
+      "name": "Send a text message6",
+      "webhookId": "15c0df3d-e9b8-4012-b3c9-b7efcf6d25a0",
+      "credentials": {
+        "telegramApi": {
+          "id": "XFGsqJB7807Mp5G7",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o",
+          "mode": "list",
+          "cachedResultName": "Customer details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 584936010,
+          "mode": "list",
+          "cachedResultName": "Form responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o/edit#gid=584936010"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Phone number": "={{ $('Append row in sheet').item.json['Phone number'] }}",
+            "Status": "idle"
+          },
+          "matchingColumns": [
+            "Phone number"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email address",
+              "displayName": "Email address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full address",
+              "displayName": "Full address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone number",
+              "displayName": "Phone number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telegram ID",
+              "displayName": "Telegram ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Restaurant",
+              "displayName": "Restaurant",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full order",
+              "displayName": "Full order",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2064,
+        336
+      ],
+      "id": "d1445fdc-b6e2-4088-a812-2b5eece90dde",
+      "name": "Update row in sheet4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "K5rPgSLfIQJvZw8c",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "=ORDER CONFIRMED ",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "7877c4f8-1dc5-413f-90cc-378e3ab459db"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Order confirmed"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d859b8d5-13ea-4b6d-b96d-e3ae746e7d48",
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "False",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Human"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1680,
+        256
+      ],
+      "id": "54492a58-d9ec-415f-9f71-8eaf0e27a692",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1872,
+        528
+      ],
+      "id": "9994a9d8-32cb-4fb3-a7b6-309811aab00f",
+      "name": "Send a text message7",
+      "webhookId": "c8b8eec7-2949-477b-a575-ea409191ec1f",
+      "credentials": {
+        "telegramApi": {
+          "id": "XFGsqJB7807Mp5G7",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o",
+          "mode": "list",
+          "cachedResultName": "Customer details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 584936010,
+          "mode": "list",
+          "cachedResultName": "Form responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gDF0IDL_nApDsD0jvfgQbodMJzY6jiPFWQDVwe4M-3o/edit#gid=584936010"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Phone number": "=",
+            "Status": "idle",
+            "Telegram ID": "={{ $json.result.from.id }}"
+          },
+          "matchingColumns": [
+            "Telegram ID"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email address",
+              "displayName": "Email address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full address",
+              "displayName": "Full address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone number",
+              "displayName": "Phone number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telegram ID",
+              "displayName": "Telegram ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Restaurant",
+              "displayName": "Restaurant",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full order",
+              "displayName": "Full order",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2096,
+        160
+      ],
+      "id": "e9141a4c-eada-4c6e-a6ec-4b21c1c1f5c3",
+      "name": "Update row in sheet5",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "K5rPgSLfIQJvZw8c",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Send message and wait for response1').item.json.data.text }}\nif by any chance customer says something you have no idea about and no factual data, ONLY return the string False and NOTHING else",
+        "options": {
+          "systemMessage": "You are QuickBite's ordering assistant. Help the customer pick items using the menu lookup tool.\n\nWhile the customer is browsing/adding items, just confirm items and running total. Only when the customer explicitly confirms (e.g. 'yes place the order'), output a final formatted receipt with itemized list and total.\non the top of that list write \"ORDER CONFIRMED\" and then start the receipt. Add some nice emojis and make the customer feel welcome.\nThe customer can ask for menu recommendations, you can recommend some items according to yourself but make the message short."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1344,
+        208
+      ],
+      "id": "f7feabf3-73ca-40b2-9e53-566605d8ff97",
+      "name": "Ordering agent"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "message": "How may I help you?📝",
+        "responseType": "freeText",
+        "options": {
+          "messageButtonLabel": "Respond",
+          "responseFormButtonLabel": "Submit",
+          "limitWaitTime": {
+            "values": {
+              "resumeAmount": 45,
+              "resumeUnit": "minutes"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1472,
+        -528
+      ],
+      "id": "b2dff5f6-09bb-4ee1-9205-70f63994a4d2",
+      "name": "Send message and wait for response",
+      "webhookId": "555acdd7-df6d-4728-aede-09c05605d211",
+      "credentials": {
+        "telegramApi": {
+          "id": "XFGsqJB7807Mp5G7",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "if the customer asks a question about the menu or anything related to food items, look in this sheet, if the result not found return exactly- false no punctuation no emojis no other text.",
+        "documentId": {
+          "__rl": true,
+          "value": "1KzMYQ5yYpvH7O7e4yHpaoj0TVeKBsxBUsIw-jxYuGvQ",
+          "mode": "list",
+          "cachedResultName": "QuickBite Master MenuFinal",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KzMYQ5yYpvH7O7e4yHpaoj0TVeKBsxBUsIw-jxYuGvQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1916134633,
+          "mode": "list",
+          "cachedResultName": "QuickBite Master Menu V2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KzMYQ5yYpvH7O7e4yHpaoj0TVeKBsxBUsIw-jxYuGvQ/edit#gid=1916134633"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        2048,
+        -1008
+      ],
+      "id": "656be775-8b6d-4701-b95f-7d9ce7e3fd9f",
+      "name": "Menu sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "K5rPgSLfIQJvZw8c",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "message": "Enter your order here-📝 \nHere is the menu sheet- https://docs.google.com/spreadsheets/d/1KzMYQ5yYpvH7O7e4yHpaoj0TVeKBsxBUsIw-jxYuGvQ/edit?usp=sharing\n(Even if your order is complete let this form know so we can confirm it)",
+        "responseType": "freeText",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        864,
+        32
+      ],
+      "id": "85c98f7a-9857-4ada-b76c-1750437f1409",
+      "name": "Send message and wait for response1",
+      "webhookId": "555acdd7-df6d-4728-aede-09c05605d211",
+      "credentials": {
+        "telegramApi": {
+          "id": "XFGsqJB7807Mp5G7",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1344,
+        560
+      ],
+      "id": "df9fe0be-2f84-4867-9baf-8defb6c73c6f",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PHuOo5J8tIL3kRFt",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Telegram Trigger": [
+      {
+        "json": {
+          "update_id": 943247109,
+          "message": {
+            "message_id": 251,
+            "from": {
+              "id": 8785323848,
+              "is_bot": false,
+              "first_name": "Bhavika",
+              "last_name": ".",
+              "username": "Bhavikaa_z",
+              "language_code": "en"
+            },
+            "chat": {
+              "id": 8785323848,
+              "first_name": "Bhavika",
+              "last_name": ".",
+              "username": "Bhavikaa_z",
+              "type": "private"
+            },
+            "date": 1783311480,
+            "text": "Hi"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "See if customer already exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "See if customer already exists": {
+      "main": [
+        [
+          {
+            "node": "ChatID linked or not already",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ChatID linked or not already": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Customer login",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Customer login": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "What you wanna do",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "What you wanna do",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "What you wanna do": {
+      "main": [
+        [
+          {
+            "node": "Main switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Ordering agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Menu sheet": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ordering agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Ordering agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Query agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "Query agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restaurant queries": {
+      "ai_tool": [
+        [
+          {
+            "node": "Query agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query agent": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message3": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Main switch": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send message and wait for response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Query agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Ordering agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Query agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "What you wanna do",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message2": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message6": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Send a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ordering agent": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message4": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Menu sheet1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Query agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message7": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Ordering agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "51794561-726f-48c1-98e4-517646c6afa8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d519ec8b8696cb571e2c44fea30ebd1b23a89191a1925d2d405116c126601b13"
+  },
+  "nodeGroups": [],
+  "id": "85hoh979MbwP1hpu",
+  "tags": []
+}
