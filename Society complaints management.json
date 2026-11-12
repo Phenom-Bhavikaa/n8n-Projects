@@ -1,0 +1,415 @@
+{
+  "name": "Society complaints management",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=A society member sent the following complaint:  {{ $json.Complaint }}\nwith apartment number:{{ $json['Apartment Number'] }}. make a subject line for this complaint, no email, only subject line.",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        208,
+        0
+      ],
+      "id": "bc8d129c-d098-4f69-86e4-59845519c79e",
+      "name": "Subject for complaint email"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Draft a formal email for the following complaint :  {{ $('New complaint box').item.json.Complaint }}, sent by name: {{ $('New complaint box').item.json.Name }} from apartment number : {{ $('New complaint box').item.json['Apartment Number'] }} and category of complaint : {{ $('New complaint box').item.json.Category }}. make it formal, no subject, don't greet. write from the secretery point of view. dont use unneccessary lines. you're writing to maintenence team. make it medium sized. ",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        528,
+        0
+      ],
+      "id": "e6c046ac-1b25-4adf-a321-cd7cf1001218",
+      "name": "Email draft"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "luvv2627@gmail.com",
+        "subject": "={{ $('Subject for complaint email').item.json.text }}",
+        "message": "={{ $json.text }} ",
+        "responseType": "customForm",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Approve or reject",
+              "fieldType": "checkbox",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Approve"
+                  },
+                  {
+                    "option": "Reject"
+                  }
+                ]
+              },
+              "limitSelection": "exact",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        848,
+        0
+      ],
+      "id": "6ddce239-7afb-4274-8bba-b1b798200fb8",
+      "name": "Send message and wait for response",
+      "webhookId": "7dbc4237-85a2-4450-beca-b5989f5fe4a5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "A4sUgOKNYkoK6spe",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "14237239-8ab3-4039-a2ba-f418b0908426",
+              "leftValue": "={{ $json.data['Approve or reject'][0] }}",
+              "rightValue": "Approve",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "b22958e6-8c01-480d-bdd5-9f816e7bbb96",
+      "name": "Approved or Rejected"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        208,
+        160
+      ],
+      "id": "71430056-c10d-4f88-85a4-06f40da5face",
+      "name": "Subject generator",
+      "credentials": {
+        "groqApi": {
+          "id": "RTPYtORZn3AdJImB",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        528,
+        160
+      ],
+      "id": "a4a6da55-ddfb-4486-b90c-e56893687c38",
+      "name": "Email body generator",
+      "credentials": {
+        "groqApi": {
+          "id": "RTPYtORZn3AdJImB",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "18YhcTCWfG8q-6_FTU2xwsX2xE0IYKHRWww2f_WMt4Bg",
+          "mode": "list",
+          "cachedResultName": "Society complaints",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18YhcTCWfG8q-6_FTU2xwsX2xE0IYKHRWww2f_WMt4Bg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 395862479,
+          "mode": "list",
+          "cachedResultName": "Form responses 2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18YhcTCWfG8q-6_FTU2xwsX2xE0IYKHRWww2f_WMt4Bg/edit#gid=395862479"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "305f1ad5-e1c7-40a7-9cd8-7cddab379cf1",
+      "name": "New complaint box",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "6KBiTKzWwd3J9MpJ",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "work.prof2008@gmail.com",
+        "subject": "={{ $('Subject for complaint email').item.json.text }}",
+        "message": "={{ $('Email draft').item.json.text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1232,
+        0
+      ],
+      "id": "a2f55245-49e7-44f7-a028-5430106453f0",
+      "name": "Final message to maintenance",
+      "webhookId": "a8deae0b-f92d-4ca4-af53-33e2f02e4d9d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "A4sUgOKNYkoK6spe",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "18YhcTCWfG8q-6_FTU2xwsX2xE0IYKHRWww2f_WMt4Bg",
+          "mode": "list",
+          "cachedResultName": "Society complaints",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18YhcTCWfG8q-6_FTU2xwsX2xE0IYKHRWww2f_WMt4Bg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 395862479,
+          "mode": "list",
+          "cachedResultName": "Form responses 2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18YhcTCWfG8q-6_FTU2xwsX2xE0IYKHRWww2f_WMt4Bg/edit#gid=395862479"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Timestamp",
+              "lookupValue": "={{ $('New complaint box').item.json.Timestamp }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1392,
+        0
+      ],
+      "id": "9b12a995-0af0-4dcb-b58b-594b22731d82",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZMKhZ01L1D9B48dp",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "18YhcTCWfG8q-6_FTU2xwsX2xE0IYKHRWww2f_WMt4Bg",
+          "mode": "list",
+          "cachedResultName": "Society complaints",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18YhcTCWfG8q-6_FTU2xwsX2xE0IYKHRWww2f_WMt4Bg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 395862479,
+          "mode": "list",
+          "cachedResultName": "Form responses 2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18YhcTCWfG8q-6_FTU2xwsX2xE0IYKHRWww2f_WMt4Bg/edit#gid=395862479"
+        },
+        "startIndex": "={{ $json.row_number }}"
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1552,
+        0
+      ],
+      "id": "a6b8d2cf-349c-42f5-8409-18306b24255d",
+      "name": "Delete rows or columns from sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZMKhZ01L1D9B48dp",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Subject for complaint email": {
+      "main": [
+        [
+          {
+            "node": "Email draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email draft": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response": {
+      "main": [
+        [
+          {
+            "node": "Approved or Rejected",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approved or Rejected": {
+      "main": [
+        [
+          {
+            "node": "Final message to maintenance",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Subject for complaint email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subject generator": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Subject for complaint email",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email body generator": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Email draft",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "New complaint box": {
+      "main": [
+        [
+          {
+            "node": "Subject for complaint email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final message to maintenance": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Delete rows or columns from sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "00c3333e-cc16-41d0-bde3-c75db38e97f0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d519ec8b8696cb571e2c44fea30ebd1b23a89191a1925d2d405116c126601b13"
+  },
+  "nodeGroups": [],
+  "id": "0jOB8ZOdyNrasReq",
+  "tags": []
+}
